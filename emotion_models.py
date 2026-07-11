@@ -35,7 +35,7 @@ class EmotionPredictor:
         sequences = self.tokenizer.texts_to_sequences([cleaned_text])
         padded = tf.keras.preprocessing.sequence.pad_sequences(sequences, maxlen=self.max_length)
         
-        preds = self.model.predict(padded, verbose=0)[0]
+        preds = self.model(padded, training=False).numpy()[0]
         
         # Keyword enhancement
         keyword_scores = get_keyword_scores(cleaned_text)

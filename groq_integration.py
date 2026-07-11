@@ -54,7 +54,7 @@ Do NOT use overly robotic or formal language. Be conversational and supportive.
 """
 
         completion = client.chat.completions.create(
-            model="llama3-8b-8192",  # Fast, efficient model for this task
+            model="llama-3.1-8b-instant",  # Fast, efficient model for this task
             messages=[
                 {
                     "role": "system",
