@@ -1,9 +1,10 @@
 streamlit
 pandas
 plotly
-tensorflow
+tensorflow-cpu==2.15.0
 transformers
 groq
 python-dotenv
 scikit-learn
-torch
+torch --extra-index-url https://download.pytorch.org/whl/cpu
+numpy<2
