@@ -20,7 +20,19 @@ class EmotionPredictor:
 
     def load_model(self):
         if os.path.exists(self.model_path) and os.path.exists(self.tokenizer_path):
-            self.model = tf.keras.models.load_model(self.model_path)
+            from tensorflow.keras.models import Sequential
+            from tensorflow.keras.layers import Embedding, Bidirectional, LSTM, Dense
+            
+            # Recreate the exact architecture to bypass TF version metadata conflicts
+            self.model = Sequential([
+                Embedding(input_dim=5000, output_dim=64, input_length=50),
+                Bidirectional(LSTM(32, return_sequences=False)),
+                Dense(32, activation='relu'),
+                Dense(5, activation='softmax')
+            ])
+            # Load only the weights, ignoring incompatible Keras 3 metadata
+            self.model.load_weights(self.model_path)
+            
             with open(self.tokenizer_path, 'rb') as handle:
                 self.tokenizer = pickle.load(handle)
 
