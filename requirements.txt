@@ -1,7 +1,7 @@
 streamlit
 pandas
 plotly
-tensorflow
+tensorflow-cpu
 transformers
 groq
 python-dotenv
