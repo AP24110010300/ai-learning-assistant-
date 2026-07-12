@@ -1,5 +1,4 @@
 import os
-from groq import Groq
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -38,7 +37,11 @@ def get_groq_response(field, problem, emotion, confidence):
         return EMOTION_RESPONSES.get(emotion, {}).get("message", "Keep up the good work! (Fallback template)")
 
     try:
-        client = Groq(api_key=api_key)
+        url = "https://api.groq.com/openai/v1/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
         
         prompt = f"""
 You are an empathetic, highly effective academic AI Learning Assistant.
@@ -53,9 +56,9 @@ Acknowledge their feelings, provide a brief field-specific tip, and suggest a co
 Do NOT use overly robotic or formal language. Be conversational and supportive.
 """
 
-        completion = client.chat.completions.create(
-            model="llama-3.1-8b-instant",  # Fast, efficient model for this task
-            messages=[
+        payload = {
+            "model": "llama-3.1-8b-instant",
+            "messages": [
                 {
                     "role": "system",
                     "content": "You are a helpful and empathetic AI Learning Assistant."
@@ -65,14 +68,17 @@ Do NOT use overly robotic or formal language. Be conversational and supportive.
                     "content": prompt
                 }
             ],
-            temperature=0.7,
-            max_tokens=150,
-            top_p=1,
-            stream=False,
-            stop=None,
-        )
+            "temperature": 0.7,
+            "max_tokens": 150,
+            "top_p": 1,
+            "stream": False
+        }
         
-        return completion.choices[0].message.content.strip()
+        import requests
+        response = requests.post(url, headers=headers, json=payload)
+        response.raise_for_status()
+        
+        return response.json()["choices"][0]["message"]["content"].strip()
         
     except Exception as e:
         print(f"Groq API Error: {e}")
